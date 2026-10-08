@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Daraja testi</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#14181f);--hint:var(--tg-theme-hint-color,#6b7280);
+--btn:var(--tg-theme-button-color,#2481cc);--btx:var(--tg-theme-button-text-color,#fff);--card:var(--tg-theme-secondary-bg-color,#f1f3f5)}
+*{box-sizing:border-box}
+body{margin:0;padding:20px 16px 32px;min-height:100vh;background:var(--bg);color:var(--tx);font:17px/1.45 system-ui,-apple-system,sans-serif}
+main{max-width:480px;margin:0 auto}
+[hidden]{display:none!important}
+h1{font-size:24px;line-height:1.2;margin:8px 0 10px}
+p{color:var(--hint);margin:0 0 20px}
+button{font:inherit;width:100%;padding:15px 16px;border:0;border-radius:12px;cursor:pointer;text-align:left;margin-bottom:10px}
+button:focus-visible{outline:3px solid var(--btn);outline-offset:2px}
+.primary{background:var(--btn);color:var(--btx);text-align:center;font-weight:600}
+.link{background:none;color:var(--hint);text-align:center;font-size:15px}
+.opt{background:var(--card);color:var(--tx)}
+.opt:active{background:var(--btn);color:var(--btx)}
+.bar{height:6px;border-radius:3px;background:var(--card);overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;width:0;background:var(--btn);transition:width .3s}
+.count{color:var(--hint);font-size:14px;margin-bottom:28px}
+.q{font-size:22px;line-height:1.3;font-weight:600;white-space:pre-line;margin:0 0 24px}
+.err{color:#d33;margin-top:12px}
+</style>
+</head>
+<body>
+<main>
+  <section id="start">
+    <h1>Darajangizni aniqlaymiz</h1>
+    <p>10 ta savol. Javobingizga qarab savollar qiyinlashadi yoki yengillashadi.</p>
+    <button class="primary" id="go">Testni boshlash</button>
+    <button class="link" id="skip">Umuman bilmayman, noldan boshlayman</button>
+  </section>
+  <section id="quiz" hidden>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="count" id="count"></div>
+    <div class="q" id="q"></div>
+    <div id="opts"></div>
+  </section>
+  <section id="fin" hidden>
+    <h1>Test tugadi</h1>
+    <p>Natija botga yuborilmoqda...</p>
+  </section>
+  <div class="err" id="err" hidden></div>
+</main>
+<script>
+const LEVELS = ["A1", "A2", "B1", "B2", "C1"], TOTAL = 10;
+// [daraja, tur (v=lug'at, g=grammatika), savol, to'g'ri javob, noto'g'ri javoblar]
+const RAW = [
+  [0,"v","Спасибо","Rahmat",["Xayr","Iltimos","Salom"]],
+  [0,"v","Вода","Suv",["Non","Sut","Choy"]],
+  [0,"v","Дом","Uy",["Yo'l","Maktab","Do'kon"]],
+  [0,"g","Меня ___ Азиз.","зовут",["звать","зовёт","зову"]],
+  [0,"g","Это ___ книга. (mening kitobim)","моя",["мой","моё","мои"]],
+  [1,"v","Вчера","Kecha",["Ertaga","Bugun","Hozir"]],
+  [1,"v","Дорого","Qimmat",["Arzon","Tez","Yaqin"]],
+  [1,"g","Я живу ___ Ташкенте.","в",["на","из","к"]],
+  [1,"g","Вчера я ___ в магазин. (erkak gapiryapti)","ходил",["хожу","пойду","ходит"]],
+  [1,"g","У меня нет ___. (aka/uka)","брата",["брат","брату","братом"]],
+  [2,"v","Заказать","Buyurtma qilmoq",["Qaytarmoq","Yo'qotmoq","Kutmoq"]],
+  [2,"v","Опаздывать","Kechikmoq",["Shoshilmoq","Yugurmoq","Uxlamoq"]],
+  [2,"g","Если завтра будет дождь, мы ___ дома.","останемся",["остались","оставаться","остался"]],
+  [2,"g","Я думаю ___ его работе.","о",["на","в","за"]],
+  [2,"g","Это человек, ___ я вчера встретил.","которого",["который","которому","которым"]],
+  [3,"v","Достижение","Yutuq",["Shartnoma","Qiyinchilik","Qaror"]],
+  [3,"v","Обязательство","Majburiyat",["Huquq","Imkoniyat","Ruxsat"]],
+  [3,"g","Если бы я знал, я ___ бы тебе.","сказал",["скажу","говорю","сказать"]],
+  [3,"g","Мы благодарны вам ___ помощь.","за",["на","о","к"]],
+  [3,"g","Книга, ___ я прочитал, очень интересная.","которую",["которая","которой","которые"]],
+  [4,"v","Недоразумение","Tushunmovchilik",["Muvaffaqiyat","Majburiyat","Noaniqlik"]],
+  [4,"v","Вопреки","...ga qaramay",["...tufayli","...uchun","...dan keyin"]],
+  [4,"g","___ на усталость, он продолжил работать.","Несмотря",["Благодаря","Из-за","Вместо"]],
+  [4,"g","Он ушёл, ___ попрощавшись.","не",["ни","нет","без"]],
+  [4,"g","Отчёт был составлен ___ сотрудником.","опытным",["опытный","опытного","опытному"]],
+];
+const BANK = RAW.map(([lvl, t, q, ok, wrong], id) => ({id, lvl, t, ok, wrong,
+  q: t === "v" ? `«${q}» o'zbekcha nima?` : `Bo'sh joyni to'ldiring:\n${q}`}));
+
+let state = {idx: 1, asked: [], hist: [], cur: null};
+
+function pick() {
+  for (const d of [0, 1, -1, 2, -2, 3, -3, 4, -4]) {
+    const l = state.idx + d;
+    if (l < 0 || l >= LEVELS.length) continue;
+    const pool = BANK.filter(q => q.lvl === l && !state.asked.includes(q.id));
+    if (pool.length) return pool[Math.floor(Math.random() * pool.length)];
+  }
+}
+
+// daraja = kamida 2 ta to'g'ri javob berilgan eng baland daraja (tasodifiy topishdan himoya)
+function finalize(hist) {
+  let lvl = 0;
+  LEVELS.forEach((_, i) => { if (hist.filter(h => h.lvl === i && h.ok).length >= 2) lvl = i; });
+  const acc = t => { const x = hist.filter(h => h.t === t); return x.length ? x.filter(h => h.ok).length / x.length : null; };
+  return {level: LEVELS[lvl], v: acc("v"), g: acc("g")};
+}
+
+const tg = Telegram.WebApp; tg.ready(); tg.expand();
+const $ = id => document.getElementById(id);
+const show = id => ["start", "quiz", "fin"].forEach(s => $(s).hidden = s !== id);
+
+function send(result) {
+  show("fin");
+  if (!tg.initData) { $("err").hidden = false; $("err").textContent = "Testni Telegram botdagi tugma orqali oching."; return; }
+  tg.sendData(JSON.stringify(result));  // bot natijani oladi, sahifa o'zi yopiladi
+}
+
+function ask() {
+  const q = pick(); state.cur = q;
+  show("quiz");
+  $("fill").style.width = (state.hist.length / TOTAL * 100) + "%";
+  $("count").textContent = `Savol ${state.hist.length + 1} / ${TOTAL}`;
+  $("q").textContent = q.q;
+  $("opts").innerHTML = "";
+  [q.ok, ...q.wrong].sort(() => Math.random() - .5).forEach(o => {
+    const b = document.createElement("button");
+    b.className = "opt"; b.textContent = o;
+    b.onclick = () => answer(o);
+    $("opts").appendChild(b);
+  });
+}
+
+function answer(o) {
+  const q = state.cur, ok = o === q.ok;
+  state.asked.push(q.id);
+  state.hist.push({lvl: q.lvl, t: q.t, ok});
+  state.idx = Math.min(LEVELS.length - 1, Math.max(0, q.lvl + (ok ? 1 : -1)));
+  state.hist.length >= TOTAL ? send(finalize(state.hist)) : ask();
+}
+
+$("go").onclick = ask;
+$("skip").onclick = () => send({level: "A1", skip: true});
+</script>
+</body>
+</html>
