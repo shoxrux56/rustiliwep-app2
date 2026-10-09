@@ -71,6 +71,10 @@ h1{font-size:26px;line-height:1.2;font-weight:600;margin:0 0 12px}
 .n span{margin-top:12px;font-size:12px;font-weight:600;color:var(--muted);transition:color .25s}
 .n.on b{border-color:var(--a);background:var(--a)}
 .n.on span{color:var(--ink)}
+.lvls{display:flex;gap:6px;margin:0 0 20px}
+.lvls span{flex:1;text-align:center;font-size:14px;font-weight:600;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:6px 0}
+.lvls b{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.lvls span.me{border-color:var(--a);background:var(--soft)}
 .bar{margin-bottom:14px}
 .bar div{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
 .bar em{font-style:normal;color:var(--muted)}
@@ -89,8 +93,8 @@ h1{font-size:26px;line-height:1.2;font-weight:600;margin:0 0 12px}
     <div class="hero">
       <div class="big" id="big" lang="ru" aria-label="Привет"></div>
       <h1 data-in>Rus tilida darajangiz qaysi?</h1>
-      <p data-in>15 ta savol bilan darajangizni aniqlaymiz. Savollar asta-sekin qiyinlashadi. Javobni bilmasangiz taxmin qilmang, «Bilmayman» ni bosing: shunda natija aniqroq chiqadi.</p>
-      <div class="chips" data-in><span>15 savol</span><span>~3 daqiqa</span><span>A0 dan C1 gacha</span></div>
+      <p data-in>20 ta savol bilan darajangizni aniqlaymiz. Savollar asta-sekin qiyinlashadi, B1 dan boshlab ancha qiyin bo'ladi. Javobni bilmasangiz taxmin qilmang, «Bilmayman» ni bosing: shunda natija aniqroq chiqadi.</p>
+      <div class="chips" data-in><span>20 savol</span><span>~5 daqiqa</span><span>A0 dan C1 gacha</span></div>
     </div>
     <button class="btn primary" id="go" data-in>Testni boshlash</button>
     <button class="btn ghost" id="skip" data-in>Umuman bilmayman, noldan boshlayman</button>
@@ -108,13 +112,14 @@ h1{font-size:26px;line-height:1.2;font-weight:600;margin:0 0 12px}
       <div class="kicker">Natijangiz</div>
       <div class="row">
         <div class="lvl" id="lvl"></div>
-        <div class="ring"><svg viewBox="0 0 80 80"><circle class="rt" cx="40" cy="40" r="34"/><circle class="rf" id="rf" cx="40" cy="40" r="34"/></svg><div class="rn" id="rn">0</div><small>/ 15</small></div>
+        <div class="ring"><svg viewBox="0 0 80 80"><circle class="rt" cx="40" cy="40" r="34"/><circle class="rf" id="rf" cx="40" cy="40" r="34"/></svg><div class="rn" id="rn">0</div><small>/ 20</small></div>
       </div>
       <div class="name" id="lname"></div>
       <p class="explain" id="explain"></p>
       <div class="track" id="track"><div class="line"><i id="fill"></i></div><div class="orb" id="orb"></div><div class="nodes" id="nodes"></div></div>
+      <div class="lvls" id="lvls"></div>
       <div id="bars"></div>
-      <p class="note">Bu 15 savollik lug'at va grammatika testi. Tinglab va o'qib tushunish tekshirilmaydi, shuning uchun natija ±1 daraja farq qilishi mumkin. Kurs davomida daraja aniqlashadi.</p>
+      <p class="note">Daraja qoidasi: biror darajadagi 4 savoldan kamida 3 tasiga to'g'ri javob bersangiz, o'sha daraja sanaladi (pastki darajalar ham yaxshi bo'lishi kerak). Bu faqat lug'at va grammatika testi, shuning uchun natija ±1 daraja farq qilishi mumkin.</p>
     </div>
     <div class="foot"><button class="btn primary" id="send"></button></div>
   </section>
@@ -134,36 +139,46 @@ const ASK = {v: "Bu so'z o'zbekcha nima?", g: "Bo'sh joyni to'ldiring"};
 const TAG = {v: "Lug'at", g: "Grammatika"};
 // [daraja (1=A1 ... 5=C1), tur (v = lug'at, g = grammatika), savol, to'g'ri javob, noto'g'ri javoblar]
 const Q = [
-  [1, "v", "Завтра", "Ertaga", ["Kecha", "Bugun", "Hozir"]],
-  [1, "g", "Это ___ книга. (mening kitobim)", "моя", ["мой", "моё", "мои"]],
-  [1, "g", "Я хочу ___ воду.", "пить", ["пью", "пьёт", "пил"]],
-  [2, "g", "Я иду в кино с ___.", "братом", ["брат", "брата", "брату"]],
-  [2, "v", "Подарок", "Sovg'a", ["Xat", "Dori", "Hujjat"]],
-  [2, "g", "Вчера мы ___ новый фильм.", "смотрели", ["смотрим", "смотреть", "смотрит"]],
-  [3, "g", "Если завтра будет дождь, мы ___ дома.", "останемся", ["остались", "оставаться", "остался"]],
-  [3, "g", "Это человек, ___ я вчера встретил.", "которого", ["который", "которому", "которым"]],
-  [3, "v", "Опаздывать", "Kechikmoq", ["Shoshilmoq", "Yugurmoq", "Uxlamoq"]],
-  [4, "g", "Если бы я знал, я ___ бы тебе.", "сказал", ["скажу", "говорю", "сказать"]],
-  [4, "v", "Ущерб", "Zarar", ["Foyda", "Qarz", "Narx"]],
-  [4, "g", "Мужчина, ___ в углу, — мой брат.", "сидящий", ["сидя", "сидеть", "сидящего"]],
-  [5, "g", "___ на усталость, он продолжил работать.", "Несмотря", ["Благодаря", "Из-за", "Вместо"]],
-  [5, "v", "Недоразумение", "Tushunmovchilik", ["Muvaffaqiyat", "Kelishuv", "Qiziqish"]],
-  [5, "g", "Он ушёл, ___ попрощавшись.", "не", ["ни", "нет", "без"]],
+  // A1: juda oson
+  [1, "v", "Спасибо", "Rahmat", ["Kechirasiz", "Salom", "Xayr"]],
+  [1, "g", "Меня ___ Азиз.", "зовут", ["зову", "зовёт", "звать"]],
+  [1, "g", "Я живу ___ Ташкенте.", "в", ["на", "из", "к"]],
+  [1, "v", "Вода", "Suv", ["Non", "Sut", "Choy"]],
+  // A2: oson
+  [2, "g", "Вчера я ___ в магазин.", "ходил", ["иду", "пойду", "ходить"]],
+  [2, "g", "У меня нет ___.", "времени", ["время", "временем", "о времени"]],
+  [2, "v", "Дорого", "Qimmat", ["Arzon", "Tez", "Uzoq"]],
+  [2, "g", "Мы говорили о ___.", "фильме", ["фильм", "фильму", "фильмом"]],
+  // B1: qiyin
+  [3, "g", "Не знаю, придёт ___ он.", "ли", ["бы", "же", "ни"]],
+  [3, "g", "Вчера я весь вечер ___ книгу.", "читал", ["прочитал", "прочту", "читаю"]],
+  [3, "g", "Он живёт недалеко ___ университета.", "от", ["с", "к", "из"]],
+  [3, "v", "Отказаться", "Bosh tortmoq", ["Rozi bo'lmoq", "Qaytmoq", "Yordam bermoq"]],
+  // B2: juda qiyin
+  [4, "g", "Книга, ___ я говорил, очень интересная.", "о которой", ["которая", "которую", "которой"]],
+  [4, "g", "Я хочу, чтобы ты ___ мне завтра.", "позвонил", ["позвонишь", "позвонить", "позвонит"]],
+  [4, "v", "Добиться", "Erishmoq", ["Yetib bormoq", "Qaytib kelmoq", "Taslim bo'lmoq"]],
+  [4, "g", "Если бы вчера не ___ дождь, мы пошли бы гулять.", "шёл", ["идёт", "пойдёт", "шла"]],
+  // C1: eng qiyin
+  [5, "g", "Нам ничего не оставалось, ___ согласиться.", "как", ["кроме", "чем", "что"]],
+  [5, "v", "Вымышленный", "O'ylab topilgan", ["Haqiqiy", "Mashhur", "Yashirin"]],
+  [5, "g", "Он вёл себя так, ___ ничего не произошло.", "будто", ["чтобы", "если", "пока"]],
+  [5, "g", "Дом, ___ в прошлом веке, до сих пор стоит.", "построенный", ["построивший", "строящийся", "построив"]],
 ];
 
-// Daraja: L darajaga chiqish uchun u darajadagi 3 savoldan kamida 2 tasi to'g'ri bo'lishi va pastki
+// Daraja: L darajaga chiqish uchun u darajadagi 4 savoldan kamida 3 tasi to'g'ri bo'lishi va pastki
 // darajalarda yetarlicha to'g'ri javob bo'lishi shart. "Bilmayman" xato hisoblanadi (jarima yo'q).
 function evaluate(answers) {
   const c = [0, 0, 0, 0, 0, 0];
   answers.forEach(a => { if (a.ok) c[a.lvl]++; });
   let level = 0, below = 0;
   for (let L = 1; L <= 5; L++) {
-    if (c[L] >= 2 && below >= 2 * (L - 1) - 1) level = L;
+    if (c[L] >= 3 && below >= 3 * (L - 1) - 1) level = L;
     below += c[L];
   }
   const acc = t => { const x = answers.filter(a => a.t === t); return x.length ? x.filter(a => a.ok).length / x.length : null; };
-  return {level: LEVELS[level], v: acc("v"), g: acc("g"), s: answers.filter(a => a.ok).length,
-          near: level < 5 && c[level + 1] === 1 ? LEVELS[level + 1] : null};
+  return {level: LEVELS[level], v: acc("v"), g: acc("g"), s: answers.filter(a => a.ok).length, lv: c.slice(1),
+          near: level < 5 && c[level + 1] === 2 ? LEVELS[level + 1] : null};
 }
 
 const shuffle = a => { a = a.slice(); for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
@@ -252,6 +267,8 @@ function finish(res) {
   $("nodes").innerHTML = LEVELS.map(l => `<div class="n"><b></b><span>${l}</span></div>`).join("");
   $("bars").innerHTML = [["v", "Lug'at boyligi"], ["g", "Grammatika"]].filter(([k]) => res[k] !== null)
     .map(([k, t]) => `<div class="bar"><div><span>${t}</span><em>${Math.round(res[k] * 100)}%</em></div><u><i data-p="${res[k]}"></i></u></div>`).join("");
+  $("lvls").hidden = !res.lv;
+  $("lvls").innerHTML = res.lv ? res.lv.map((n, k) => `<span class="${k + 1 === idx ? "me" : ""}"><b>${LEVELS[k + 1]}</b>${n}/4</span>`).join("") : "";
   $("send").textContent = inTg ? "Natijani botga yuborish" : "Qayta yechish";
 
   const dur = reduce ? 0.001 : Math.max(0.4, idx / 5 * 1.4);
@@ -262,7 +279,7 @@ function finish(res) {
     $("fill").style.transform = `scaleX(${idx / 5})`;
     $("orb").style.transform = `translateX(${w * idx / 5}px)`;
     document.querySelectorAll(".n").forEach((n, k) => setTimeout(() => n.classList.add("on"), reduce || k > idx ? (k > idx ? 1e9 : 0) : (k / Math.max(idx, 1)) * dur * 850));
-    $("rf").style.strokeDashoffset = 213.6 * (1 - res.s / 15);
+    $("rf").style.strokeDashoffset = 213.6 * (1 - res.s / 20);
     const t0 = performance.now(), T = reduce ? 1 : 1000;
     (function tick(now) {
       const p = Math.min(1, (now - t0) / T);
@@ -307,7 +324,7 @@ $("go").onclick = () => {
   try { tg.enableClosingConfirmation(); } catch (e) {}
   ask();
 };
-$("skip").onclick = () => finish({level: "A0", v: null, g: null, s: 0, near: null, skip: true});
+$("skip").onclick = () => finish({level: "A0", v: null, g: null, s: 0, lv: null, near: null, skip: true});
 $("send").onclick = sendResult;
 </script>
 </body>
