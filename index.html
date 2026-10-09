@@ -1,139 +1,314 @@
 <!doctype html>
-<html lang="uz">
+<html lang="uz" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Daraja testi</title>
+<title>Rus tili daraja testi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#14181f);--hint:var(--tg-theme-hint-color,#6b7280);
---btn:var(--tg-theme-button-color,#2481cc);--btx:var(--tg-theme-button-text-color,#fff);--card:var(--tg-theme-secondary-bg-color,#f1f3f5)}
-*{box-sizing:border-box}
-body{margin:0;padding:20px 16px 32px;min-height:100vh;background:var(--bg);color:var(--tx);font:17px/1.45 system-ui,-apple-system,sans-serif}
-main{max-width:480px;margin:0 auto}
+:root{--bg:#F5F7FC;--surface:#fff;--ink:#0F172A;--muted:#5B6781;--line:#DDE3F0;--a:#3D5AFE;--a2:#6C4DFF;--aink:#fff;--soft:#E8ECFF;--glow:rgba(61,90,254,.16);color-scheme:light}
+:root[data-theme=dark]{--bg:#0A1020;--surface:#121A30;--ink:#EEF2FF;--muted:#94A0BC;--line:#26304C;--a:#7C93FF;--a2:#A78BFF;--aink:#0A1020;--soft:#1B2547;--glow:rgba(124,147,255,.18);color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;overflow-x:hidden;color:var(--ink);background:var(--bg);font:400 17px/1.45 "Onest",system-ui,-apple-system,"Segoe UI",sans-serif;padding:max(20px,env(safe-area-inset-top)) 20px 0}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(700px 420px at 100% 0,var(--glow),transparent 70%),radial-gradient(600px 380px at 0 100%,var(--glow),transparent 70%),var(--bg)}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+main{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.screen{flex:1;display:flex;flex-direction:column}
 [hidden]{display:none!important}
-h1{font-size:24px;line-height:1.2;margin:8px 0 10px}
-p{color:var(--hint);margin:0 0 20px}
-button{font:inherit;width:100%;padding:15px 16px;border:0;border-radius:12px;cursor:pointer;text-align:left;margin-bottom:10px}
-button:focus-visible{outline:3px solid var(--btn);outline-offset:2px}
-.primary{background:var(--btn);color:var(--btx);text-align:center;font-weight:600}
-.link{background:none;color:var(--hint);text-align:center;font-size:15px}
-.opt{background:var(--card);color:var(--tx)}
-.opt:active{background:var(--btn);color:var(--btx)}
-.bar{height:6px;border-radius:3px;background:var(--card);overflow:hidden;margin:6px 0 4px}
-.bar i{display:block;height:100%;width:0;background:var(--btn);transition:width .3s}
-.count{color:var(--hint);font-size:14px;margin-bottom:28px}
-.q{font-size:22px;line-height:1.3;font-weight:600;white-space:pre-line;margin:0 0 24px}
-.err{color:#d33;margin-top:12px}
+.hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 0 24px}
+.big{display:flex;margin-bottom:24px;font:700 clamp(50px,17vw,74px)/1 "Unbounded",sans-serif;letter-spacing:-.02em;color:var(--a)}
+h1{font-size:26px;line-height:1.2;font-weight:600;margin:0 0 12px}
+.hero p{color:var(--muted);margin:0 0 20px;max-width:36ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:14px;background:var(--surface);border:1.5px solid var(--line);border-radius:99px;padding:6px 13px}
+.btn{display:block;width:100%;font:inherit;font-weight:600;border:0;border-radius:16px;padding:18px;cursor:pointer;text-align:center;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--a);outline-offset:3px}
+.primary{color:var(--aink);background:linear-gradient(135deg,var(--a),var(--a2));margin-bottom:6px}
+.ghost{background:none;color:var(--muted);font-weight:500;font-size:15px;margin-bottom:14px}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:var(--muted)}
+.tag{background:var(--soft);color:var(--a);border-radius:99px;padding:3px 12px;font-weight:600}
+.pbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-bottom:24px}
+.pbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--a),var(--a2));transform-origin:left;transform:scaleX(0);transition:transform .35s ease-out}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:24px;padding:28px 22px;min-height:176px;margin-bottom:18px;display:flex;flex-direction:column;justify-content:center}
+.ask{color:var(--muted);font-size:15px;margin-bottom:14px}
+.ru{font-family:"Unbounded",sans-serif;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.ru.word{font-size:clamp(30px,10vw,42px)}
+.ru.sent{font-size:clamp(20px,6vw,25px)}
+.gap{display:inline-block;width:2.2em;border-bottom:3px solid var(--a);margin:0 .12em}
+.opt{display:block;width:100%;text-align:left;font:500 17px/1.3 "Onest",sans-serif;background:var(--surface);color:var(--ink);border:1.5px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:transform .12s,background .12s,color .12s,border-color .12s,opacity .2s}
+.opt:active{transform:scale(.985)}
+.opt.sel{background:var(--a);border-color:var(--a);color:var(--aink)}
+.locked .opt:not(.sel){opacity:.45}
+.opt.idk{border-style:dashed;color:var(--muted);text-align:center;margin-top:4px}
+.opt.idk.sel{color:var(--aink)}
+
+.res{flex:1;padding-bottom:12px}
+.kicker{color:var(--muted);font-size:15px;margin:6px 0 8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.lvl{font:700 clamp(64px,22vw,92px)/1 "Unbounded",sans-serif;color:var(--a);opacity:0}
+.ring{position:relative;width:96px;height:96px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.rt{stroke:var(--line)}
+.rf{stroke:var(--a);stroke-dasharray:213.6;stroke-dashoffset:213.6;transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)}
+.rn{position:absolute;inset:0;display:grid;place-items:center;font:700 26px "Unbounded",sans-serif;padding-bottom:10px}
+.ring small{position:absolute;left:0;right:0;bottom:22px;text-align:center;color:var(--muted);font-size:12px}
+.name{font-size:21px;font-weight:600;margin:10px 0 4px;min-height:30px}
+.explain{color:var(--muted);margin:0 0 26px;font-size:15px}
+.track{position:relative;margin:6px 7px 38px}
+.line{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.line i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--a),var(--a2));transform-origin:left;transform:scaleX(0);transition:transform var(--dur,1.2s) cubic-bezier(.45,.05,.3,1)}
+.orb{position:absolute;top:-6px;left:-9px;width:18px;height:18px;border-radius:50%;background:var(--a);box-shadow:0 0 0 5px var(--glow);transition:transform var(--dur,1.2s) cubic-bezier(.45,.05,.3,1)}
+.nodes{position:absolute;left:-7px;right:-7px;top:-4px;display:flex;justify-content:space-between}
+.n{width:14px;display:flex;flex-direction:column;align-items:center}
+.n b{width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--line);transition:background .25s,border-color .25s}
+.n span{margin-top:12px;font-size:12px;font-weight:600;color:var(--muted);transition:color .25s}
+.n.on b{border-color:var(--a);background:var(--a)}
+.n.on span{color:var(--ink)}
+.bar{margin-bottom:14px}
+.bar div{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.bar em{font-style:normal;color:var(--muted)}
+.bar u{display:block;height:8px;border-radius:4px;background:var(--line);text-decoration:none;overflow:hidden}
+.bar u i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--a),var(--a2));transform-origin:left;transform:scaleX(0);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.note{font-size:13px;color:var(--muted);margin:18px 0 0}
+.foot{position:sticky;bottom:0;padding:16px 0 max(16px,env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 38%)}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.001s!important}}
 </style>
 </head>
 <body>
+<div class="bg"></div>
+<canvas id="fx"></canvas>
 <main>
-  <section id="start">
-    <h1>Darajangizni aniqlaymiz</h1>
-    <p>10 ta savol. Javobingizga qarab savollar qiyinlashadi yoki yengillashadi.</p>
-    <button class="primary" id="go">Testni boshlash</button>
-    <button class="link" id="skip">Umuman bilmayman, noldan boshlayman</button>
+  <section id="start" class="screen">
+    <div class="hero">
+      <div class="big" id="big" lang="ru" aria-label="Привет"></div>
+      <h1 data-in>Rus tilida darajangiz qaysi?</h1>
+      <p data-in>15 ta savol bilan darajangizni aniqlaymiz. Savollar asta-sekin qiyinlashadi. Javobni bilmasangiz taxmin qilmang, «Bilmayman» ni bosing: shunda natija aniqroq chiqadi.</p>
+      <div class="chips" data-in><span>15 savol</span><span>~3 daqiqa</span><span>A0 dan C1 gacha</span></div>
+    </div>
+    <button class="btn primary" id="go" data-in>Testni boshlash</button>
+    <button class="btn ghost" id="skip" data-in>Umuman bilmayman, noldan boshlayman</button>
   </section>
-  <section id="quiz" hidden>
-    <div class="bar"><i id="fill"></i></div>
-    <div class="count" id="count"></div>
-    <div class="q" id="q"></div>
+
+  <section id="quiz" class="screen" hidden>
+    <div class="top"><span id="count"></span><span class="tag" id="tag"></span></div>
+    <div class="pbar" role="progressbar" aria-label="Test jarayoni"><i id="pf"></i></div>
+    <div class="card" id="card"><div class="ask" id="ask"></div><div class="ru" id="ru" lang="ru"></div></div>
     <div id="opts"></div>
   </section>
-  <section id="fin" hidden>
-    <h1>Test tugadi</h1>
-    <p>Natija botga yuborilmoqda...</p>
+
+  <section id="fin" class="screen" hidden>
+    <div class="res">
+      <div class="kicker">Natijangiz</div>
+      <div class="row">
+        <div class="lvl" id="lvl"></div>
+        <div class="ring"><svg viewBox="0 0 80 80"><circle class="rt" cx="40" cy="40" r="34"/><circle class="rf" id="rf" cx="40" cy="40" r="34"/></svg><div class="rn" id="rn">0</div><small>/ 15</small></div>
+      </div>
+      <div class="name" id="lname"></div>
+      <p class="explain" id="explain"></p>
+      <div class="track" id="track"><div class="line"><i id="fill"></i></div><div class="orb" id="orb"></div><div class="nodes" id="nodes"></div></div>
+      <div id="bars"></div>
+      <p class="note">Bu 15 savollik lug'at va grammatika testi. Tinglab va o'qib tushunish tekshirilmaydi, shuning uchun natija ±1 daraja farq qilishi mumkin. Kurs davomida daraja aniqlashadi.</p>
+    </div>
+    <div class="foot"><button class="btn primary" id="send"></button></div>
   </section>
-  <div class="err" id="err" hidden></div>
 </main>
+
 <script>
-const LEVELS = ["A1", "A2", "B1", "B2", "C1"], TOTAL = 10;
-// [daraja, tur (v=lug'at, g=grammatika), savol, to'g'ri javob, noto'g'ri javoblar]
-const RAW = [
-  [0,"v","Спасибо","Rahmat",["Xayr","Iltimos","Salom"]],
-  [0,"v","Вода","Suv",["Non","Sut","Choy"]],
-  [0,"v","Дом","Uy",["Yo'l","Maktab","Do'kon"]],
-  [0,"g","Меня ___ Азиз.","зовут",["звать","зовёт","зову"]],
-  [0,"g","Это ___ книга. (mening kitobim)","моя",["мой","моё","мои"]],
-  [1,"v","Вчера","Kecha",["Ertaga","Bugun","Hozir"]],
-  [1,"v","Дорого","Qimmat",["Arzon","Tez","Yaqin"]],
-  [1,"g","Я живу ___ Ташкенте.","в",["на","из","к"]],
-  [1,"g","Вчера я ___ в магазин. (erkak gapiryapti)","ходил",["хожу","пойду","ходит"]],
-  [1,"g","У меня нет ___. (aka/uka)","брата",["брат","брату","братом"]],
-  [2,"v","Заказать","Buyurtma qilmoq",["Qaytarmoq","Yo'qotmoq","Kutmoq"]],
-  [2,"v","Опаздывать","Kechikmoq",["Shoshilmoq","Yugurmoq","Uxlamoq"]],
-  [2,"g","Если завтра будет дождь, мы ___ дома.","останемся",["остались","оставаться","остался"]],
-  [2,"g","Я думаю ___ его работе.","о",["на","в","за"]],
-  [2,"g","Это человек, ___ я вчера встретил.","которого",["который","которому","которым"]],
-  [3,"v","Достижение","Yutuq",["Shartnoma","Qiyinchilik","Qaror"]],
-  [3,"v","Обязательство","Majburiyat",["Huquq","Imkoniyat","Ruxsat"]],
-  [3,"g","Если бы я знал, я ___ бы тебе.","сказал",["скажу","говорю","сказать"]],
-  [3,"g","Мы благодарны вам ___ помощь.","за",["на","о","к"]],
-  [3,"g","Книга, ___ я прочитал, очень интересная.","которую",["которая","которой","которые"]],
-  [4,"v","Недоразумение","Tushunmovchilik",["Muvaffaqiyat","Majburiyat","Noaniqlik"]],
-  [4,"v","Вопреки","...ga qaramay",["...tufayli","...uchun","...dan keyin"]],
-  [4,"g","___ на усталость, он продолжил работать.","Несмотря",["Благодаря","Из-за","Вместо"]],
-  [4,"g","Он ушёл, ___ попрощавшись.","не",["ни","нет","без"]],
-  [4,"g","Отчёт был составлен ___ сотрудником.","опытным",["опытный","опытного","опытному"]],
+const LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1"];
+const INFO = {
+  A0: ["Noldan boshlaymiz", "Alifbo va birinchi so'zlardan boshlaymiz. Hamma shu yerdan boshlaydi."],
+  A1: ["Boshlang'ich", "Asosiy so'z va qoidalarni bilasiz. Keyingi qadam: kundalik gaplar."],
+  A2: ["Elementar", "Lug'at va grammatikangiz oddiy kundalik vaziyatlar uchun yetarli."],
+  B1: ["O'rta", "Tanish mavzularda ancha erkin tushunasiz va bog'lanib gapira olasiz."],
+  B2: ["O'rtadan yuqori", "Murakkabroq grammatika va ko'p so'zlarni bilasiz."],
+  C1: ["Ilg'or", "Siz rus tilini juda yaxshi bilasiz. Kurs sizga asosan takrorlash bo'ladi."],
+};
+const ASK = {v: "Bu so'z o'zbekcha nima?", g: "Bo'sh joyni to'ldiring"};
+const TAG = {v: "Lug'at", g: "Grammatika"};
+// [daraja (1=A1 ... 5=C1), tur (v = lug'at, g = grammatika), savol, to'g'ri javob, noto'g'ri javoblar]
+const Q = [
+  [1, "v", "Завтра", "Ertaga", ["Kecha", "Bugun", "Hozir"]],
+  [1, "g", "Это ___ книга. (mening kitobim)", "моя", ["мой", "моё", "мои"]],
+  [1, "g", "Я хочу ___ воду.", "пить", ["пью", "пьёт", "пил"]],
+  [2, "g", "Я иду в кино с ___.", "братом", ["брат", "брата", "брату"]],
+  [2, "v", "Подарок", "Sovg'a", ["Xat", "Dori", "Hujjat"]],
+  [2, "g", "Вчера мы ___ новый фильм.", "смотрели", ["смотрим", "смотреть", "смотрит"]],
+  [3, "g", "Если завтра будет дождь, мы ___ дома.", "останемся", ["остались", "оставаться", "остался"]],
+  [3, "g", "Это человек, ___ я вчера встретил.", "которого", ["который", "которому", "которым"]],
+  [3, "v", "Опаздывать", "Kechikmoq", ["Shoshilmoq", "Yugurmoq", "Uxlamoq"]],
+  [4, "g", "Если бы я знал, я ___ бы тебе.", "сказал", ["скажу", "говорю", "сказать"]],
+  [4, "v", "Ущерб", "Zarar", ["Foyda", "Qarz", "Narx"]],
+  [4, "g", "Мужчина, ___ в углу, — мой брат.", "сидящий", ["сидя", "сидеть", "сидящего"]],
+  [5, "g", "___ на усталость, он продолжил работать.", "Несмотря", ["Благодаря", "Из-за", "Вместо"]],
+  [5, "v", "Недоразумение", "Tushunmovchilik", ["Muvaffaqiyat", "Kelishuv", "Qiziqish"]],
+  [5, "g", "Он ушёл, ___ попрощавшись.", "не", ["ни", "нет", "без"]],
 ];
-const BANK = RAW.map(([lvl, t, q, ok, wrong], id) => ({id, lvl, t, ok, wrong,
-  q: t === "v" ? `«${q}» o'zbekcha nima?` : `Bo'sh joyni to'ldiring:\n${q}`}));
 
-let state = {idx: 1, asked: [], hist: [], cur: null};
-
-function pick() {
-  for (const d of [0, 1, -1, 2, -2, 3, -3, 4, -4]) {
-    const l = state.idx + d;
-    if (l < 0 || l >= LEVELS.length) continue;
-    const pool = BANK.filter(q => q.lvl === l && !state.asked.includes(q.id));
-    if (pool.length) return pool[Math.floor(Math.random() * pool.length)];
+// Daraja: L darajaga chiqish uchun u darajadagi 3 savoldan kamida 2 tasi to'g'ri bo'lishi va pastki
+// darajalarda yetarlicha to'g'ri javob bo'lishi shart. "Bilmayman" xato hisoblanadi (jarima yo'q).
+function evaluate(answers) {
+  const c = [0, 0, 0, 0, 0, 0];
+  answers.forEach(a => { if (a.ok) c[a.lvl]++; });
+  let level = 0, below = 0;
+  for (let L = 1; L <= 5; L++) {
+    if (c[L] >= 2 && below >= 2 * (L - 1) - 1) level = L;
+    below += c[L];
   }
+  const acc = t => { const x = answers.filter(a => a.t === t); return x.length ? x.filter(a => a.ok).length / x.length : null; };
+  return {level: LEVELS[level], v: acc("v"), g: acc("g"), s: answers.filter(a => a.ok).length,
+          near: level < 5 && c[level + 1] === 1 ? LEVELS[level + 1] : null};
 }
 
-// daraja = kamida 2 ta to'g'ri javob berilgan eng baland daraja (tasodifiy topishdan himoya)
-function finalize(hist) {
-  let lvl = 0;
-  LEVELS.forEach((_, i) => { if (hist.filter(h => h.lvl === i && h.ok).length >= 2) lvl = i; });
-  const acc = t => { const x = hist.filter(h => h.t === t); return x.length ? x.filter(h => h.ok).length / x.length : null; };
-  return {level: LEVELS[lvl], v: acc("v"), g: acc("g")};
-}
-
-const tg = Telegram.WebApp; tg.ready(); tg.expand();
+const shuffle = a => { a = a.slice(); for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
 const $ = id => document.getElementById(id);
 const show = id => ["start", "quiz", "fin"].forEach(s => $(s).hidden = s !== id);
+const tg = window.Telegram && Telegram.WebApp;
+// klaviatura tugmasidan ochilganda initData bo'sh bo'ladi, shuning uchun platform bo'yicha aniqlaymiz
+const inTg = !!(tg && tg.platform && tg.platform !== "unknown");
+const reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const dark = tg && tg.colorScheme ? tg.colorScheme === "dark" : !!(window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+document.documentElement.dataset.theme = dark ? "dark" : "light";
+try {
+  tg.ready(); tg.expand();
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  tg.setHeaderColor(bg); tg.setBackgroundColor(bg);
+} catch (e) {}
+const haptic = (kind, v) => { try { tg.HapticFeedback[kind](v); } catch (e) {} };
+// faqat transform va opacity animatsiyalari: telefonda ham silliq
+const anim = (el, kf, o) => (reduce || !el.animate) ? Promise.resolve() : el.animate(kf, o).finished.catch(() => {});
+const UP = [{opacity: 0, transform: "translateY(14px)"}, {opacity: 1, transform: "none"}];
 
-function send(result) {
-  show("fin");
-  if (!tg.initData) { $("err").hidden = false; $("err").textContent = "Testni Telegram botdagi tugma orqali oching."; return; }
-  tg.sendData(JSON.stringify(result));  // bot natijani oladi, sahifa o'zi yopiladi
-}
+// ---- boshlanish ekrani ----
+$("big").innerHTML = [..."Привет"].map(ch => `<span>${ch}</span>`).join("");
+document.querySelectorAll("#big span").forEach((s, k) => anim(s, UP, {duration: 420, delay: k * 60, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards"}));
+document.querySelectorAll("[data-in]").forEach((el, k) => anim(el, UP, {duration: 420, delay: 260 + k * 70, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards"}));
+
+// ---- test ----
+let i = 0, answers = [], locked = false;
 
 function ask() {
-  const q = pick(); state.cur = q;
+  const [, t, ru, ok, wrong] = Q[i];
+  locked = false;
   show("quiz");
-  $("fill").style.width = (state.hist.length / TOTAL * 100) + "%";
-  $("count").textContent = `Savol ${state.hist.length + 1} / ${TOTAL}`;
-  $("q").textContent = q.q;
-  $("opts").innerHTML = "";
-  [q.ok, ...q.wrong].sort(() => Math.random() - .5).forEach(o => {
+  $("opts").className = "";
+  $("count").textContent = `Savol ${i + 1} / ${Q.length}`;
+  $("tag").textContent = TAG[t];
+  $("pf").style.transform = `scaleX(${i / Q.length})`;
+  $("ask").textContent = ASK[t];
+  const r = $("ru");
+  r.className = "ru " + (t === "v" ? "word" : "sent");
+  r.innerHTML = t === "v" ? ru : ru.replace("___", '<span class="gap"></span>');
+  const box = $("opts"); box.innerHTML = "";
+  shuffle([ok, ...wrong]).forEach((o, k) => {
     const b = document.createElement("button");
     b.className = "opt"; b.textContent = o;
-    b.onclick = () => answer(o);
-    $("opts").appendChild(b);
+    if (t === "g") b.lang = "ru";
+    b.onclick = () => choose(b, o);
+    box.appendChild(b);
+    anim(b, UP, {duration: 240, delay: 80 + k * 40, easing: "ease-out", fill: "backwards"});
   });
+  const idk = document.createElement("button");   // taxmin qilmaslik uchun: har doim oxirida
+  idk.className = "opt idk"; idk.textContent = "Bilmayman";
+  idk.onclick = () => choose(idk, null);
+  box.appendChild(idk);
+  anim(idk, UP, {duration: 240, delay: 80 + 4 * 40, easing: "ease-out", fill: "backwards"});
+  const card = $("card");
+  card.getAnimations && card.getAnimations().forEach(a => a.cancel());
+  anim(card, [{opacity: 0, transform: "translateX(20px)"}, {opacity: 1, transform: "none"}], {duration: 260, easing: "cubic-bezier(.2,.8,.2,1)"});
 }
 
-function answer(o) {
-  const q = state.cur, ok = o === q.ok;
-  state.asked.push(q.id);
-  state.hist.push({lvl: q.lvl, t: q.t, ok});
-  state.idx = Math.min(LEVELS.length - 1, Math.max(0, q.lvl + (ok ? 1 : -1)));
-  state.hist.length >= TOTAL ? send(finalize(state.hist)) : ask();
+function choose(btn, o) {
+  if (locked) return;
+  locked = true;
+  btn.classList.add("sel"); $("opts").className = "locked";
+  haptic("impactOccurred", "light");
+  const [lvl, t, , ok] = Q[i];
+  answers.push({lvl, t, ok: o === ok});
+  $("pf").style.transform = `scaleX(${(i + 1) / Q.length})`;
+  setTimeout(async () => {
+    await anim($("card"), [{opacity: 1, transform: "none"}, {opacity: 0, transform: "translateX(-20px)"}], {duration: 170, easing: "ease-in", fill: "forwards"});
+    i++; i < Q.length ? ask() : finish(evaluate(answers));
+  }, reduce ? 0 : 260);
 }
 
-$("go").onclick = ask;
-$("skip").onclick = () => send({level: "A1", skip: true});
+// ---- natija ----
+let result = null;
+function finish(res) {
+  result = res;
+  try { tg.disableClosingConfirmation(); } catch (e) {}
+  show("fin"); window.scrollTo(0, 0);
+  const idx = LEVELS.indexOf(res.level), [name, desc] = INFO[res.level];
+  $("lvl").textContent = res.level; $("lvl").style.opacity = 0;
+  $("lname").textContent = name + (res.near ? ` · ${res.near} ga yaqin` : "");
+  $("explain").textContent = desc;
+  $("rn").textContent = "0"; $("rf").style.strokeDashoffset = 213.6;
+  $("nodes").innerHTML = LEVELS.map(l => `<div class="n"><b></b><span>${l}</span></div>`).join("");
+  $("bars").innerHTML = [["v", "Lug'at boyligi"], ["g", "Grammatika"]].filter(([k]) => res[k] !== null)
+    .map(([k, t]) => `<div class="bar"><div><span>${t}</span><em>${Math.round(res[k] * 100)}%</em></div><u><i data-p="${res[k]}"></i></u></div>`).join("");
+  $("send").textContent = inTg ? "Natijani botga yuborish" : "Qayta yechish";
+
+  const dur = reduce ? 0.001 : Math.max(0.4, idx / 5 * 1.4);
+  $("track").style.setProperty("--dur", dur + "s");
+  const w = $("track").clientWidth;
+  $("fill").style.transform = "scaleX(0)"; $("orb").style.transform = "translateX(0)";
+  setTimeout(() => {
+    $("fill").style.transform = `scaleX(${idx / 5})`;
+    $("orb").style.transform = `translateX(${w * idx / 5}px)`;
+    document.querySelectorAll(".n").forEach((n, k) => setTimeout(() => n.classList.add("on"), reduce || k > idx ? (k > idx ? 1e9 : 0) : (k / Math.max(idx, 1)) * dur * 850));
+    $("rf").style.strokeDashoffset = 213.6 * (1 - res.s / 15);
+    const t0 = performance.now(), T = reduce ? 1 : 1000;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / T);
+      $("rn").textContent = Math.round(res.s * p);
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+    document.querySelectorAll(".bar u i").forEach(el => el.style.transform = `scaleX(${el.dataset.p})`);
+  }, 300);
+  setTimeout(() => {
+    $("lvl").style.opacity = 1;
+    anim($("lvl"), [{opacity: 0, transform: "scale(.75)"}, {opacity: 1, transform: "none"}], {duration: 420, easing: "cubic-bezier(.2,1.2,.4,1)"});
+    haptic("notificationOccurred", "success");
+    if (idx >= 1) confetti();
+  }, 300 + dur * 1000 + 150);
+}
+
+function confetti() {
+  if (reduce) return;
+  const c = $("fx"), x = c.getContext("2d"), dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = innerWidth, H = innerHeight;
+  c.width = W * dpr; c.height = H * dpr; x.scale(dpr, dpr);
+  const cols = ["#3D5AFE", "#8B5CF6", "#F43F8E", "#F59E0B", "#22C55E", "#38BDF8"];
+  const ps = Array.from({length: 90}, () => ({
+    x: W / 2 + (Math.random() - .5) * 60, y: H * .32, vx: (Math.random() - .5) * 13, vy: -Math.random() * 12 - 3,
+    s: 6 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .35, c: cols[Math.floor(Math.random() * cols.length)]}));
+  const t0 = performance.now();
+  (function frame(now) {
+    x.clearRect(0, 0, W, H);
+    ps.forEach(p => { p.vy += .36; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); });
+    if (now - t0 < 2400) requestAnimationFrame(frame); else x.clearRect(0, 0, W, H);
+  })(t0);
+}
+
+function sendResult() {
+  if (inTg) tg.sendData(JSON.stringify(result));   // bot natijani oladi, oyna o'zi yopiladi
+  else show("start");
+}
+
+$("go").onclick = () => {
+  i = 0; answers = []; haptic("impactOccurred", "medium");
+  try { tg.enableClosingConfirmation(); } catch (e) {}
+  ask();
+};
+$("skip").onclick = () => finish({level: "A0", v: null, g: null, s: 0, near: null, skip: true});
+$("send").onclick = sendResult;
 </script>
 </body>
 </html>
